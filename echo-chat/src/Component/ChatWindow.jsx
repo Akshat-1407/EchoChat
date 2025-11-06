@@ -1,19 +1,68 @@
-import { getFirestore, doc, getDoc } from "firebase/firestore";
+import { arrayUnion, doc, getDoc, onSnapshot, setDoc, updateDoc } from 'firebase/firestore';
 import { db } from "../../firebaseConfig";
 import { useParams } from "react-router-dom";
 import { MessageSquareText, PlusIcon, SendIcon } from 'lucide-react';
 import { useEffect, useState } from "react";
-
-
+import { useAuth } from "./AuthWrapper";
   
 
 function Chats() {
 
   const [msg, setMsg] = useState("");
   const [recieverUser, setRecieverUser] = useState(null);
+  const [msgList, setMsgList] = useState([]);
+  const { chatId: recieverId } = useParams();
+  const { currUser: sender } = useAuth();
 
-  const {chatId: recieverId } = useParams();
 
+  const chatId =
+    sender?.uid > recieverId
+      ? `${sender?.uid}-${recieverId}`
+      : `${recieverId}-${sender?.uid}`;
+
+
+  const handleSendMsg = async () => {
+    if (msg) {
+      // date
+      const date = new Date();
+      const timeStamp = date.toLocaleString("en-US", {
+        hour: "numeric",
+        minute: "numeric",
+        hour12: true,
+      });
+
+
+      // start chat with user 
+      if (msgList?.length === 0) {
+        await setDoc(doc(db, "user-chats", chatId), {
+          chatId: chatId,
+          messages: [
+            {
+              text: msg,
+              time: timeStamp,
+              sender: sender?.uid,
+              receiver: recieverId,
+            },
+          ],
+        });
+      } 
+      else {
+        // update in the message list
+        await updateDoc(doc(db, "user-chats", chatId), {
+          chatId: chatId,
+          // arrayUnion is used here to append to last message to the array list.
+          messages: arrayUnion({
+            text: msg,
+            time: timeStamp,
+            sender: sender?.uid,
+            receiver: recieverId,
+          }),
+        });
+      }
+      setMsg("");
+    }
+  }
+    
 
   useEffect(() => {
     (async function () {
@@ -24,6 +73,16 @@ function Chats() {
           setRecieverUser(docSnap.data())
         } 
     })()
+
+    // message list
+    const msgUnsubscribe = onSnapshot(doc(db, "user-chats", chatId), (doc) => {
+      setMsgList(doc.data()?.messages || []);
+    });
+
+    return () => {
+      msgUnsubscribe();
+    }
+
   }, [recieverId]);
   
 
@@ -44,7 +103,7 @@ function Chats() {
 
 
   return (
-    <div className='flex flex-col w-[75vw]'>
+    <div className='flex flex-col h-screen w-[75vw]'>
 
       {/* Reciever's Profile */}
       <div className="flex items-center gap-6 bg-gray-300 rounded-md m-3 h-14 py-6" >
@@ -59,8 +118,20 @@ function Chats() {
 
 
       {/* Message list */}
-      <div className="flex-grow mr-3 ml-3 rounded-md bg-[#eff2f5]">
-              {/* Chat Id : {recieverId} */}
+      <div className="flex flex-col flex-grow mr-3 ml-3 p-5 rounded-md bg-[#eff2f5] overflow-y-scroll no-scrollbar">
+        {msgList?.map((m, index) => (
+          <div
+            key={index}
+            data-sender={m.sender === sender.uid}
+            // break-words is the edge case where a single word is quite long, so we need to break that word before it breaks our ui.
+            className={`bg-white w-fit rounded-md p-2 mb-4 shadow-sm max-w-[400px] break-words data-[sender=true]:ml-auto data-[sender=true]:bg-green-100 `}
+          >
+            <p>{m?.text}</p>
+            <p className="text-xs text-neutral-500 text-end">
+              {m?.time}
+            </p>
+          </div>
+        ))}
       </div>
 
 
@@ -72,14 +143,14 @@ function Chats() {
           placeholder="Type a message..."
           value={msg}
           onChange={(e) => { setMsg(e.target.value) }}
-          // onKeyDown={(e) => {
-          //   if (e.key === "Enter") {
-          //     handleSendMsg();
-          //   }
-          // }}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              handleSendMsg();
+            }
+          }}
         />
 
-        <button className="cursor-pointer"><SendIcon/></button>
+        <button className="cursor-pointer" onClick={handleSendMsg}><SendIcon/></button>
       </div>
 
 
