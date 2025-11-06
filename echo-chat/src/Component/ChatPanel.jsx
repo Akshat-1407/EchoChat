@@ -103,7 +103,7 @@ function ChatPanel() {
                 key={user.id} 
                 to={`/chats/${user.id}`}
               >
-                <img className='h-12 rounded-full border-1 border-solid border-black' src={user?.profile_pic || "/user.png"} alt="" />
+                <img className='h-12 rounded-full border-1 object-cover border-solid border-black' src={user?.profile_pic || "/user.png"} alt="" />
                 <p>{user?.username}</p>
 
               </Link>
@@ -112,7 +112,7 @@ function ChatPanel() {
         </>
       }
     </div>
-    
+
   );
 }
 

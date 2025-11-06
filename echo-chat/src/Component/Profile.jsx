@@ -26,10 +26,10 @@ function Profile(props) {
             alt="User Pic" 
           />
 
-          <p>{currUser.displayName}</p>
+          <p>{currUser?.displayName}</p>
 
           <p>About</p>
-          
+
           <button className="cursor-pointer w-[50%]" onClick={logoutHandler}>Logout</button>
       </div>
     
