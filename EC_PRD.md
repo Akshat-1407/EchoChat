@@ -3,9 +3,10 @@
 **User discovery** :  whenever user logs in it will be shown in the left chat screen -> all the users will be visible 
 
 ### Routes
+* Landing Page -> `/`
 * Login -> `/login` 
-* Protected Route  Home -> `/`  & if not loggedIN -> redirect to login 
-* Chat  -> `/uniqueId`
+* Protected Route  Home -> `/chats`  & if not loggedIN -> redirect to login 
+* Chat  -> `/chats/:uniqueId`
 * 404 -> if not the above url -> take the user to 404 page not found
 
 
@@ -65,7 +66,7 @@
     npm run build
 ```
 
-* if deploying for first time
+* If deploying for first time
 
 ```bash
     firebase login
@@ -76,7 +77,7 @@
 ```
 from the options 
 - hosting ->
-        -  optional github action : no
+        - optional github action : no
         - public dir : dist
         - rewrites -> no ,
         - overwrite -> no

@@ -1,5 +1,3 @@
-// Yaha loading nhi h
-
 import {useState, useEffect} from 'react'
 import { createContext, useContext } from 'react'
 import { onAuthStateChanged } from "firebase/auth";
