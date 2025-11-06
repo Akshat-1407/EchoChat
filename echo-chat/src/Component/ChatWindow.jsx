@@ -115,7 +115,7 @@ function Chats() {
           <p className="mr-auto">{recieverUser?.username}</p>
         </div>
       </div>
-
+      
 
       {/* Message list */}
       <div className="flex flex-col flex-grow mr-3 ml-3 p-5 rounded-md bg-[#eff2f5] overflow-y-scroll no-scrollbar">

@@ -1,7 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from "./AuthWrapper";
 
-
 function Landing() {
   const MessageSquareIcon = ({ className = "w-6 h-6" }) => (
     <svg
