@@ -9,7 +9,7 @@ const AuthContext = createContext();
 
 function AuthWrapper({children}) {
   const [currUser, setCurrUser] = useState(null);
-  const [loading, setLoading] = useState(true); // Tracks if Firebase has initialized
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
       const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -19,7 +19,9 @@ function AuthWrapper({children}) {
       });
 
       // 3. Return the unsubscribe function to clean up the observer when the component unmounts.
-      return unsubscribe;
+      return () => {
+        unsubscribe()
+      }
   }, []);
 
   return (
