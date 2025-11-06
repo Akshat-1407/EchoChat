@@ -11,7 +11,7 @@ function ChatPanel() {
 
   const [users, setUsers] = useState([]);
   const [showProfile, setShowProfile] = useState(false);
-  const [searchQuerry, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
   const [userLoading, setUserLoading] = useState(true);
 
   const { currUser } = useAuth();
@@ -42,6 +42,17 @@ function ChatPanel() {
     })();
   }, [db]);
 
+
+  // Search Bar Logic
+  let filterdUsers = users;
+  if (searchQuery) {
+      // filter chats based on search query
+      filterdUsers = users.filter((user) =>
+          user.username?.toLowerCase()?.startsWith(searchQuery?.toLowerCase())
+      );
+  }
+
+
   const onBack = () => {
     setShowProfile(false);
   }
@@ -52,18 +63,18 @@ function ChatPanel() {
   }
 
   if(userLoading) {
-    return <UserLoading className="flex flex-grow"></UserLoading>
+    return <UserLoading></UserLoading>
   }
 
   return (
-    <div className='w-[30vw] h-screen border-r-1'>
+    <div className='flex flex-col w-[30vw] min-w-[200px] bg-white p-3 h-screen border-r-1'>
       
       {/* Profile */}
-      <div className="flex items-center gap-6 py-2 bg-gray-300 mb-3 h-14" >
+      <div className="flex items-center gap-6 py-2 bg-gray-300 mb-3 h-14 rounded-md" >
         <div className="flex items-center">
           <img 
             onClick={() => { setShowProfile(true) }} 
-            className='h-11 cursor-pointer rounded-full border-1 border-solid border-black ml-5 mr-4 ' 
+            className='h-11 cursor-pointer object-cover rounded-full border-1 border-solid border-black ml-5 mr-4 ' 
             src={currUser?.photoURL || "/user.png"} alt="user" 
           />
           <p className="mr-auto">My Profile</p>
@@ -72,26 +83,27 @@ function ChatPanel() {
       </div>
 
       {/* Search Bar */}
-        <div className="bg-[#eff2f5] flex items-center gap-4 px-3 py-2 rounded-lg mb-3">
-            <SearchIcon className="w-4 h-4" />
-            <input
-                className="bg-background focus-within:outline-none"
-                placeholder="Search"
-                value={searchQuerry}
-                onChange={(e) => setSearchQuery(e.target.value)}
-            />
-        </div>
+      <div className=" w-full bg-[#eff2f5] flex items-center gap-4 px-3 py-2 rounded-lg mb-3">
+          <SearchIcon className="w-4 h-4" />
+          <input
+              className="bg-background focus-within:outline-none"
+              placeholder="Search"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+          />
+      </div>
 
       {/* Chat List */}
-      <div className="overflow-y-scroll no-scrollbar">
-        {users.map((user) => (
-          <Link className='flex items-center gap-2 ml-2 py-2 hover:bg-[#eff2f5]' key={user.id} to={`/chats/${user.id}`}>
+      <div className=" divide-y py-4 max-h-fit  no-scrollbar overflow-y-scroll">
+        {filterdUsers.map((user) => (
+          <Link className='flex items-center gap-2 px-3 py-2 mb-[1px] bg-white hover:bg-[#eff2f5] border-b-1 border-gray-300' key={user.id} to={`/chats/${user.id}`}>
             <img className='h-12 rounded-full border-1 border-solid border-black' src={user?.profile_pic || "/user.png"} alt="" />
             <p>{user.username}</p>
           </Link>
         ))}
       </div>
     </div>
+
   );
 
 }

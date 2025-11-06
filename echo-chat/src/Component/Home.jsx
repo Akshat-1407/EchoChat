@@ -14,13 +14,8 @@ function Home() {
       navigate("/login")
     }
     
-    // useEffect(() => {
-    //   if (currUser == null) {
-    //     navigate("/login");
-    //   }
-    // }, [currUser, navigate]);
 
-    return <div className='flex'>
+    return <div className="flex">
       <ChatPanel></ChatPanel> 
       <ChatWindow></ChatWindow>
     </div>

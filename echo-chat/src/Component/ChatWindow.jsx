@@ -28,21 +28,20 @@ function Chats() {
     <div className='flex flex-col w-[75vw]'>
 
       {/* Reciever Info */}
-      <div className="flex items-center gap-6 py-2 bg-gray-300 mb-3 h-14" >
+      <div className="flex items-center gap-6 py-2 bg-gray-300 h-14" >
         <div className="flex items-center">
           <img 
             onClick={() => { setShowProfile(true) }} 
-            className='h-11 cursor-pointer rounded-full border-1 border-solid border-black ml-5 mr-4 ' 
+            className='h-11 cursor-pointer object-cover rounded-full border-1 border-solid border-black ml-5 mr-4 ' 
             src={"/user.png"} alt="user" 
           />
           <p className="mr-auto">Reciever's Name</p>
         </div>
-
       </div>
 
 
       {/* Message list */}
-    <div className="flex-grow">
+    <div className="flex-grow bg-[#eff2f5]">
             Chat Id : {chatId}
     </div>
 
